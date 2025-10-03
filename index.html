@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>User Registration</title>
+  <style>
+    /* Body background with gradient */
+    body {
+      margin: 0;
+      font-family: "Segoe UI", Arial, sans-serif;
+      background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    /* Form box styling */
+    .form-box {
+      background-color: #fff;
+      padding: 30px;
+      width: 380px;
+      border-radius: 15px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+      animation: fadeIn 1s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Heading */
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #333;
+    }
+
+    /* Labels */
+    label {
+      font-weight: 600;
+      display: block;
+      margin-bottom: 5px;
+      color: #444;
+    }
+
+    /* Input fields */
+    input {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 12px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 14px;
+      transition: 0.3s ease;
+    }
+
+    input:focus {
+      border-color: #2575fc;
+      outline: none;
+      box-shadow: 0 0 8px rgba(37, 117, 252, 0.3);
+    }
+
+    /* Button */
+    button {
+      width: 100%;
+      padding: 12px;
+      background: linear-gradient(135deg, #6a11cb, #2575fc);
+      color: white;
+      font-size: 16px;
+      font-weight: bold;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: 0.3s ease;
+    }
+
+    button:hover {
+      background: linear-gradient(135deg, #2575fc, #6a11cb);
+      transform: translateY(-2px);
+    }
+
+    /* Error messages */
+    .error-message {
+      color: #e74c3c;
+      font-size: 13px;
+      margin-top: -8px;
+      margin-bottom: 8px;
+    }
+
+    /* Password strength message */
+    #strengthMessage {
+      font-size: 13px;
+      font-weight: bold;
+      margin-top: -6px;
+      margin-bottom: 10px;
+    }
+
+    .weak { color: #e74c3c; }
+    .medium { color: #f39c12; }
+    .strong { color: #27ae60; }
+  </style>
+</head>
+<body>
+
+  <form id="reg">
+    <div class="form-box">
+      <h2>Create Account</h2>
+
+      <label for="name">Full Name</label>
+      <input type="text" id="name" placeholder="Enter your name" />
+      <div id="nameError" class="error-message"></div>
+
+      <label for="conno">Contact No.</label>
+      <input type="tel" id="conno" placeholder="Enter 10-digit number" />
+      <div id="contactError" class="error-message"></div>
+
+      <label for="email">Email</label>
+      <input type="email" id="email" placeholder="Enter your email ID" />
+      <div id="emailError" class="error-message"></div>
+
+      <label for="password">Password</label>
+      <input type="password" id="password" placeholder="Enter your password" />
+      <div id="passwordError" class="error-message"></div>
+      <div id="strengthMessage"></div>
+
+      <button type="submit">Register</button>
+    </div>
+  </form>
+
+  <script>
+    const form = document.querySelector("#reg");
+    const name = document.getElementById("name");
+    const conno = document.getElementById("conno");
+    const email = document.getElementById("email");
+    const password = document.getElementById("password");
+
+    const nameError = document.getElementById("nameError");
+    const contactError = document.getElementById("contactError");
+    const emailError = document.getElementById("emailError");
+    const passwordError = document.getElementById("passwordError");
+    const strengthMessage = document.getElementById("strengthMessage");
+
+    const emailPattern = /^[^ ]+@[^ ]+\.[a-z]{2,3}$/;
+    const phonePattern = /^[0-9]{10}$/;
+
+    // Password strength checker
+    password.addEventListener("input", function () {
+      const val = password.value.trim();
+      let strength = "";
+
+      if (val.length === 0) {
+        strengthMessage.textContent = "";
+        return;
+      }
+
+      if (val.length < 6) {
+        strength = "Weak (min 6 chars)";
+        strengthMessage.className = "weak";
+      } else if (/[A-Z]/.test(val) && /[a-z]/.test(val) && /[0-9]/.test(val) && /[^A-Za-z0-9]/.test(val)) {
+        strength = "Strong ✔";
+        strengthMessage.className = "strong";
+      } else {
+        strength = "Medium (add uppercase, number, special char)";
+        strengthMessage.className = "medium";
+      }
+
+      strengthMessage.textContent = strength;
+    });
+
+    form.addEventListener("submit", function (e) {
+      e.preventDefault();
+
+      // Reset errors
+      nameError.textContent = "";
+      contactError.textContent = "";
+      emailError.textContent = "";
+      passwordError.textContent = "";
+      name.style.border = "";
+      conno.style.border = "";
+      email.style.border = "";
+      password.style.border = "";
+
+      let valid = true;
+
+      // Name validation
+      if (!name.value.trim()) {
+        nameError.textContent = "Name is required.";
+        name.style.border = "2px solid red";
+        valid = false;
+      }
+
+      // Contact number validation
+      if (!conno.value.trim()) {
+        contactError.textContent = "Contact number is required.";
+        conno.style.border = "2px solid red";
+        valid = false;
+      } else if (!phonePattern.test(conno.value.trim())) {
+        contactError.textContent = "Enter a valid 10-digit number.";
+        conno.style.border = "2px solid red";
+        valid = false;
+      }
+
+      // Email validation
+      if (!email.value.trim()) {
+        emailError.textContent = "Email is required.";
+        email.style.border = "2px solid red";
+        valid = false;
+      } else if (!emailPattern.test(email.value.trim())) {
+        emailError.textContent = "Enter a valid email.";
+        email.style.border = "2px solid red";
+        valid = false;
+      }
+
+      // Password validation
+      if (!password.value.trim()) {
+        passwordError.textContent = "Password is required.";
+        password.style.border = "2px solid red";
+        valid = false;
+      } else if (password.value.trim().length < 6) {
+        passwordError.textContent = "Password must be at least 6 characters.";
+        password.style.border = "2px solid red";
+        valid = false;
+      }
+
+      // Final success
+      if (valid) {
+        alert("✅ Registration Successful!");
+        form.reset();
+        strengthMessage.textContent = "";
+      }
+    });
+  </script>
+</body>
+</html>
